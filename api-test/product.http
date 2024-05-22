@@ -1,0 +1,38 @@
+###
+
+GET http://localhost:8000/projects
+Authorization: Bearer 
+
+###
+
+POST http://localhost:8000/user
+Content-Type: application/json
+
+{
+    "name": "Teste",
+    "email": "teste@gmail.com",
+    "password": "010203040506"
+}
+
+###
+
+PUT http://localhost:8000/user
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFVzZXIiOiI3NDJjYjI4YS0yYTk2LTQ5NWMtYmVmYi01NTdlNTE0NDgwMjIiLCJlbWFpbCI6InRlc3RlQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiMDEwMjAzMDQwNTA2Iiwic2Vzc2lvbklkIjoieWRleTVlYWJncnNsZHgyZGQ2MWsiLCJpYXQiOjE3MTYzNTI2NzIsImV4cCI6MTcxNjM1NjI3Mn0.HDjfXQh2kW-BAxVn9BABbtCSn-cp9Kkx0Y5VT3dcSXQ
+
+
+{
+    "name": "new user",
+    "password": "010203040506"
+}
+
+###
+
+POST http://localhost:8000/products
+Content-Type: application/json
+
+{
+    "name": "Teste 2",
+    "price": 1.00
+}
+
