@@ -13,7 +13,6 @@ export class JwtMiddleware {
         }
 
         try {
-            // Verifica o token JWT e extrai o email
             const verificationResult = await this.authenticateJWT.verifyToken(token);
 
             if (!verificationResult.isValid || !verificationResult.idUser) {

@@ -11,8 +11,7 @@ export type CreateProjectInput = {
 }
 
 export type CreateProjectOutput = {
-    id: string;
-    message: string
+    project: Project
 }
 
 export class CreateProjectUseCase implements UseCase<CreateProjectInput, CreateProjectOutput> {
@@ -25,31 +24,30 @@ export class CreateProjectUseCase implements UseCase<CreateProjectInput, CreateP
 
     public async execute({ userId, name, description, startDate, expectedEndDate }: CreateProjectInput): Promise<CreateProjectOutput> {
 
-        const aProject = Project.create({
-            userId,
-            name, 
-            description, 
-            startDate, 
-            expectedEndDate
-        })
-
         try {
+            const aProject = Project.create({
+                userId,
+                name,
+                description,
+                startDate,
+                expectedEndDate
+            })
+
             await this.projectGateway.store(aProject);
-        }
-        catch (error: any) {
-            throw new Error('Error storing project: ' + error.message);
-        }
+            
+            const output = this.presentOutput(aProject);
 
-        const output = this.presentOutput(aProject);
+            return output;
 
-        return output;
+        } catch (error: any) {
+           return error;
+        }
 
     }
 
     private presentOutput(project: Project): CreateProjectOutput {
         return {
-            id: project.id,
-            message: `Project ${project.name} created successfully`
+            project: project
         };
     }
 

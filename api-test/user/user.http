@@ -1,0 +1,35 @@
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFVzZXIiOiI3MmZlMWViNi1iN2U5LTRhNTEtODFmOS1mMDI2ZTM5ODJmYTciLCJlbWFpbCI6InRlc3RlMkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjAxMDIwMzA0MDUwNiIsInNlc3Npb25JZCI6ImRwazJ1cDVkZDhyZm56ZjE0bDlkbmoiLCJpYXQiOjE3MTY4NDA4OTEsImV4cCI6MTcxNjg0NDQ5MX0.UrvWKwagyJehWeq2J7fMKy5FdUM0y5M8bAo2m7C2Nf8
+
+
+POST http://localhost:8000/user
+Content-Type: application/json
+
+{
+    "name": "guilherme",
+    "email": "teste2@gmail.com",
+    "password": "010203040506"
+}
+
+###
+
+PUT http://localhost:8000/user
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+    "name": "testando",
+    "password": "testando0102030405"
+}
+
+###
+
+DELETE http://localhost:8000/user
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+###
+
+GET http://localhost:8000/user
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}

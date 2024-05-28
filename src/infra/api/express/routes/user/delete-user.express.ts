@@ -1,29 +1,29 @@
 import { Request, Response } from "express";
 import { Route, HttpMethod } from "../route";
 import { JwtMiddleware } from "../../../../middleware/jwt/middleware.jwt";
-import { UpdateUserUseCase, UpdateUserOutput, UpdateUserInput } from "../../../../../application/usecases/user/update-user.usecase";
+import { DeleteUserInput, DeleteUserOutput, DeleteUserUseCase } from "../../../../../application/usecases/user/delete-user.usecase";
 import { ErrorServeExpress } from "../../error/error-serve.express";
 
 
-export type ResponseUpdateUser = {
-    user: object
+export type ResponseDeleteUser = {
+    message: string
 }
 
-export class UpdateUserRoute implements Route {
+export class DeleteUserRoute implements Route {
 
     private constructor(
         private readonly path: string,
         private readonly method: HttpMethod,
-        private readonly updateUserService: UpdateUserUseCase,
+        private readonly deleteUserService: DeleteUserUseCase,
         private readonly jwtMiddleware: JwtMiddleware,
         private readonly errorServe: ErrorServeExpress
     ) { }
 
-    public static create(updateUserService: UpdateUserUseCase, jwtMiddleware: JwtMiddleware, errorServe: ErrorServeExpress) {
-        return new UpdateUserRoute(
+    public static create(deleteUserService: DeleteUserUseCase, jwtMiddleware: JwtMiddleware, errorServe: ErrorServeExpress) {
+        return new DeleteUserRoute(
             "/user",
-            HttpMethod.PUT,
-            updateUserService,
+            HttpMethod.DELETE,
+            deleteUserService,
             jwtMiddleware,
             errorServe
         );
@@ -34,27 +34,22 @@ export class UpdateUserRoute implements Route {
             await this.jwtMiddleware.middleware(request, response, async () => {
                 const idUser = (request as any).idUser;
 
-                const { name, password } = request.body;
-
-                const input: UpdateUserInput = {
+                const input: DeleteUserInput = {
                     userId: idUser,
-                    name,
-                    password
                 };
 
-                const output: UpdateUserOutput = await this.updateUserService.execute(input);
+                const output: DeleteUserOutput = await this.deleteUserService.execute(input);
 
                 if (output instanceof Error) {
                     return this.errorServe.handler(output, response);
                 }
 
-                const responseBody: ResponseUpdateUser = {
-                    user: output.updatedUser
+                const responseBody: ResponseDeleteUser = {
+                    message: output.message
                 };
 
                 response.status(200).json(responseBody).send();
             });
-
         };
     }
 

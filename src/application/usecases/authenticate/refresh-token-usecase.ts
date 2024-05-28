@@ -13,29 +13,30 @@ export type RefreshTokenOutput = {
 
 export class RefreshTokenUsecase implements UseCase<RefreshTokenInput, RefreshTokenOutput> {
 
-    private constructor(private readonly authenticate: Authenticate){}
+    private constructor(private readonly authenticate: Authenticate) { }
 
-    public static create(authenticate: Authenticate){
+    public static create(authenticate: Authenticate) {
         return new RefreshTokenUsecase(authenticate);
     }
 
-    public async execute({refresh_token}: RefreshTokenInput): Promise<RefreshTokenOutput> {
+    public async execute({ refresh_token }: RefreshTokenInput): Promise<RefreshTokenOutput> {
 
         try {
             const token = await this.authenticate.generateNewTokenWithRefreshToken(refresh_token);
 
-            if (token) {
-                const output: RefreshTokenOutput = {
-                    access_token: token.accessToken,
-                    refresh_token: token.refreshToken
-
-                };
-                return output;
-            } else {
+            if (!token) {
                 throw new Error('Invalid refresh token.');
             }
+
+            const output: RefreshTokenOutput = {
+                access_token: token.accessToken,
+                refresh_token: token.refreshToken
+
+            };
+            return output;
+
         } catch (error: any) {
-            throw new Error('Error generating the token: ' + error.message);
+            return error;
         }
-    }   
+    }
 }

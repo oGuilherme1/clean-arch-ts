@@ -1,29 +1,29 @@
 import { Request, Response } from "express";
-import { IndexProjectsUseCase, IndexProjectInput, IndexProjectsOutput } from "../../../../../application/usecases/project/index.project.usecase";
 import { Route, HttpMethod } from "../route";
 import { JwtMiddleware } from "../../../../middleware/jwt/middleware.jwt";
+import { UpdateProjectInput, UpdateProjectOutput, UpdateProjectUseCase } from "../../../../../application/usecases/project/update-project.usecase";
 import { ErrorServeExpress } from "../../error/error-serve.express";
 
 
-export type ResponseIndexProject = {
-    projects: object[];
+export type ResponseUpdateProject = {
+    project: object;
 }
 
-export class IndexProjectsRoute implements Route {
+export class UpdateProjectRoute implements Route {
 
     private constructor(
         private readonly path: string,
         private readonly method: HttpMethod,
-        private readonly indexProjectsService: IndexProjectsUseCase,
+        private readonly updateProjectsService: UpdateProjectUseCase,
         private readonly jwtMiddleware: JwtMiddleware,
         private readonly errorServe: ErrorServeExpress
     ) { }
 
-    public static create(indexProjectsService: IndexProjectsUseCase, jwtMiddleware: JwtMiddleware, errorServe: ErrorServeExpress) {
-        return new IndexProjectsRoute(
+    public static create(updateProjectsService: UpdateProjectUseCase, jwtMiddleware: JwtMiddleware, errorServe: ErrorServeExpress) {
+        return new UpdateProjectRoute(
             "/project",
-            HttpMethod.GET,
-            indexProjectsService,
+            HttpMethod.PUT,
+            updateProjectsService,
             jwtMiddleware,
             errorServe
         );
@@ -34,24 +34,25 @@ export class IndexProjectsRoute implements Route {
 
             await this.jwtMiddleware.middleware(request, response, async () => {
                 const idUser = (request as any).idUser;
+                const { projectId, description } = request.body;
 
-                const input: IndexProjectInput = {
-                    userId: idUser,
+                const input: UpdateProjectInput = {
+                    projectId: projectId,
+                    description: description
                 };
 
-                const output: IndexProjectsOutput = await this.indexProjectsService.execute(input);
+                const output: UpdateProjectOutput = await this.updateProjectsService.execute(input);
 
                 if(output instanceof Error){
-                    return this.errorServe.handler(output, response);
+                   return this.errorServe.handler(output, response);
                 }
 
-                const responseBody: ResponseIndexProject = {
-                    projects: output.projects,
+                const responseBody: ResponseUpdateProject = {
+                    project: output.updatedProject
                 };
 
-                response.status(200).json(responseBody).send();
+                response.status(200).json(responseBody);
             });
-
         };
     }
 
@@ -63,5 +64,4 @@ export class IndexProjectsRoute implements Route {
     public getMethod(): HttpMethod {
         return this.method;
     }
-
 }

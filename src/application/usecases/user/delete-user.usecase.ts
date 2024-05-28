@@ -20,13 +20,12 @@ export class DeleteUserUseCase implements UseCase<DeleteUserInput, DeleteUserOut
 
     public async execute({ userId }: DeleteUserInput): Promise<DeleteUserOutput> {
 
-        const existingUser = await this.userGateway.findById(userId);
-
-        if (!existingUser) {
-            throw new Error("User not found");
-        }
-
         try {
+            const existingUser = await this.userGateway.findById(userId);
+
+            if (!existingUser) {
+                throw new Error("User not found");
+            }
 
             await this.userGateway.destroy(userId);
 
@@ -37,7 +36,7 @@ export class DeleteUserUseCase implements UseCase<DeleteUserInput, DeleteUserOut
             return output;
 
         } catch (error: any) {
-            throw new Error(`Failed to delete user: ${error.message}`);
+            return error;
         }
 
     }

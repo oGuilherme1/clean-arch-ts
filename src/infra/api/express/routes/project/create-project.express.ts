@@ -1,29 +1,29 @@
 import { Request, Response } from "express";
 import { Route, HttpMethod } from "../route";
 import { JwtMiddleware } from "../../../../middleware/jwt/middleware.jwt";
-import { UpdateUserUseCase, UpdateUserOutput, UpdateUserInput } from "../../../../../application/usecases/user/update-user.usecase";
+import { CreateProjectInput, CreateProjectOutput, CreateProjectUseCase } from "../../../../../application/usecases/project/create-project.usecase";
 import { ErrorServeExpress } from "../../error/error-serve.express";
 
 
-export type ResponseUpdateUser = {
-    user: object
+export type ResponseCreateProject = {
+    project: object;
 }
 
-export class UpdateUserRoute implements Route {
+export class CreateProjectRoute implements Route {
 
     private constructor(
         private readonly path: string,
         private readonly method: HttpMethod,
-        private readonly updateUserService: UpdateUserUseCase,
+        private readonly createProjectsService: CreateProjectUseCase,
         private readonly jwtMiddleware: JwtMiddleware,
         private readonly errorServe: ErrorServeExpress
     ) { }
 
-    public static create(updateUserService: UpdateUserUseCase, jwtMiddleware: JwtMiddleware, errorServe: ErrorServeExpress) {
-        return new UpdateUserRoute(
-            "/user",
-            HttpMethod.PUT,
-            updateUserService,
+    public static create(createProjectsService: CreateProjectUseCase, jwtMiddleware: JwtMiddleware,  errorServe: ErrorServeExpress) {
+        return new CreateProjectRoute(
+            "/project",
+            HttpMethod.POST,
+            createProjectsService,
             jwtMiddleware,
             errorServe
         );
@@ -31,25 +31,27 @@ export class UpdateUserRoute implements Route {
 
     public getHandler(): (request: Request, response: Response) => Promise<void> {
         return async (request: Request, response: Response) => {
+
             await this.jwtMiddleware.middleware(request, response, async () => {
                 const idUser = (request as any).idUser;
+                const { name, description, startDate, expectedEndDate } = request.body;
 
-                const { name, password } = request.body;
-
-                const input: UpdateUserInput = {
+                const input: CreateProjectInput = {
                     userId: idUser,
-                    name,
-                    password
+                    name: name,
+                    description: description,
+                    startDate: startDate,
+                    expectedEndDate: expectedEndDate
                 };
 
-                const output: UpdateUserOutput = await this.updateUserService.execute(input);
-
-                if (output instanceof Error) {
+                const output: CreateProjectOutput = await this.createProjectsService.execute(input);
+                
+                if(output instanceof Error){
                     return this.errorServe.handler(output, response);
                 }
 
-                const responseBody: ResponseUpdateUser = {
-                    user: output.updatedUser
+                const responseBody: ResponseCreateProject = {
+                    project: output.project
                 };
 
                 response.status(200).json(responseBody).send();
@@ -66,5 +68,4 @@ export class UpdateUserRoute implements Route {
     public getMethod(): HttpMethod {
         return this.method;
     }
-
 }

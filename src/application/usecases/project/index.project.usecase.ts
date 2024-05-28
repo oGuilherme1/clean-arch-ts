@@ -19,7 +19,20 @@ export class IndexProjectsUseCase implements UseCase<IndexProjectInput, IndexPro
     }
 
     public async execute({userId}: IndexProjectInput): Promise<IndexProjectsOutput> {
-        const projects = await this.projectGateway.index(userId);
-        return { projects };
+
+        try {
+
+            const projects = await this.projectGateway.index(userId);
+
+            if(!projects) {
+                throw new Error('No projects found');
+            }
+            
+            return { projects };
+
+        } catch(error: any){
+            return error;
+        }
+
     }
 }

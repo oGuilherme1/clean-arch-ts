@@ -1,0 +1,57 @@
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFVzZXIiOiJlMWE1ZjAxNS00MDNmLTQ5NTctYjYyZi1hNTUwYmMyYzJlZGIiLCJlbWFpbCI6InRlc3RlMkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjAxMDIwMzA0MDUwNiIsInNlc3Npb25JZCI6ImVjY3dnOHJqbTBsemlrbWFjNGhtOCIsImlhdCI6MTcxNjU4NDcyMiwiZXhwIjoxNzE2NTg4MzIyfQ.UiOXSXDEp29e-4oWMrLmuAijZnztUasV6ppWrJ7N17I
+
+
+
+POST http://localhost:8000/project
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+    "name": "testando",
+    "description": "teste project 2",
+    "startDate": "22/05/2024",
+    "expectedEndDate": "23/05/2024"
+}
+
+###
+
+GET http://localhost:8000/project
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+
+}
+
+###
+
+GET http://localhost:8000/project/b50562e8-1ff6-4446-b090-52ed3e6e5332
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+
+}
+
+###
+
+PUT http://localhost:8000/project
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+    "projectId": "b50562e8-1ff6-4446-b090-52ed3e6e5332",
+    "description": "teste mais uma vez"
+}
+
+###
+
+DELETE http://localhost:8000/project/b50562e8-1ff6-4446-b090-52ed3e6e5332
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+
+}
+
+###

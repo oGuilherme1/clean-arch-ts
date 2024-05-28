@@ -70,10 +70,14 @@ export class Project extends Entity<ProjectProps>{
         if (typeof props.description !== 'string' || props.description.trim().length === 0) {
             throw new Error('Description must be a non-empty string.');
         }
+
+        props.startDate = this.convertDateToISO(props.startDate);
     
         if (!(props.startDate instanceof Date) || isNaN(props.startDate.getTime())) {
             throw new Error('Start date must be a valid Date object.');
         }
+
+        props.expectedEndDate = this.convertDateToISO(props.expectedEndDate);
     
         if (!(props.expectedEndDate instanceof Date) || isNaN(props.expectedEndDate.getTime())) {
             throw new Error('Expected end date must be a valid Date object.');
@@ -82,5 +86,20 @@ export class Project extends Entity<ProjectProps>{
         if (props.expectedEndDate <= props.startDate) {
             throw new Error('Expected end date must be after start date.');
         }
+    }
+
+    private static convertDateToISO(date: Date | string): Date {
+
+        const brazilianDatePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    
+        if (typeof date === 'string') {
+            if (brazilianDatePattern.test(date)) {
+                const [, day, month, year] = date.match(brazilianDatePattern)!;
+                const isoDateString = `${year}-${month}-${day}`;
+                return new Date(isoDateString);
+            }
+        }
+        
+        return new Date(date);
     }
 }

@@ -20,13 +20,12 @@ export class DeleteProjectUseCase implements UseCase<DeleteProjectInput, DeleteP
 
     public async execute({ projectId }: DeleteProjectInput): Promise<DeleteProjectOutput> {
 
-        const existingProject = await this.projectGateway.findById(projectId);
-
-        if (!existingProject) {
-            throw new Error("Project not found");
-        }
-
         try {
+            const existingProject = await this.projectGateway.findById(projectId);
+
+            if (!existingProject) {
+                throw new Error("Project not found");
+            }
 
             await this.projectGateway.destroy(projectId);
 
@@ -37,7 +36,7 @@ export class DeleteProjectUseCase implements UseCase<DeleteProjectInput, DeleteP
             return output;
 
         } catch (error: any) {
-            throw new Error(`Failed to delete project: ${error.message}`);
+            return error;
         }
 
     }

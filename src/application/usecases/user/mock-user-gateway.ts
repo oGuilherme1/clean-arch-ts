@@ -5,12 +5,9 @@ export class MockUserGateway implements UserGateway {
 
     private users: User[] = [];
 
-    public async show(id: string): Promise<User> {
+    public async show(id: string): Promise<User | null> {
         const user = await this.findById(id);
-        if (!user) {
-            throw new Error(`Usuário com ID ${id} não encontrado`);
-        }
-        return user;
+        return user || null;
     }
 
     public async store(user: User): Promise<void> {
@@ -28,20 +25,12 @@ export class MockUserGateway implements UserGateway {
     }
 
     public async update(user: User): Promise<void> {
-        const existingUser = await this.findById(user.id);
-        if (!existingUser) {
-            throw new Error(`Usuário com ID ${user.id} não encontrado`);
-        }
         const userIndex = this.users.findIndex(u => u.id === user.id);
         this.users[userIndex] = user;
     }
 
     public async destroy(id: string): Promise<void> {
         const userIndex = this.users.findIndex(user => user.id === id);
-        if (userIndex === -1) {
-            throw new Error(`User with ID ${id} not found`);
-        }
-        console.log(userIndex, this.users);
         this.users.splice(userIndex);
     }
 }

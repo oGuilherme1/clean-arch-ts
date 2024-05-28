@@ -20,7 +20,7 @@ export class AuthenticateJWT implements Authenticate {
     constructor() {
         this.SECRET_KEY = process.env.SECRET_KEY_JWT || '';
         if (!this.SECRET_KEY) {
-            throw new Error('Chave secreta JWT não definida');
+            throw new Error('JWT secret key not defined!');
         }
     }
 
@@ -41,12 +41,8 @@ export class AuthenticateJWT implements Authenticate {
             );
 
             return { accessToken, refreshToken };
-        } catch (error) {
-            return {
-                accessToken: '',
-                refreshToken: '',
-                message: "Failed to generate tokens"
-            };
+        } catch (error: any) {
+            return error;
         }
     }
 
@@ -70,12 +66,8 @@ export class AuthenticateJWT implements Authenticate {
             );
 
             return { accessToken, refreshToken: newRefreshToken };
-        } catch (error) {
-            return {
-                accessToken: '',
-                refreshToken: '',
-                message: "Refresh token is invalid"
-            };
+        } catch (error: any) {
+            return error;
         }
     }
 
@@ -86,8 +78,11 @@ export class AuthenticateJWT implements Authenticate {
                 isValid: true,
                 idUser: decodedToken.idUser
             };
-        } catch (error) {
-            throw new Error("Token is invalid");
+        } catch (error: any) {
+            return {
+                isValid: false,
+                idUser: 'Token is invalid'
+            }
         }
     }
 

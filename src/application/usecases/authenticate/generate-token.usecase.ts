@@ -25,18 +25,19 @@ export class GenerateTokenUsecase implements UseCase<GenerateTokenInput, Generat
         try {
             const token = await this.authenticate.generateToken(idUser, email, password);
 
-            if (token) {
-                const output: GenerateTokenOutput = {
-                    access_token: token.accessToken,
-                    refresh_token: token.refreshToken
-                };
-
-                return output;
-            } else {
+            if (!token) {
                 throw new Error('Incorrect email or password');
             }
+
+            const output: GenerateTokenOutput = {
+                access_token: token.accessToken,
+                refresh_token: token.refreshToken
+            };
+
+            return output;
+
         } catch (error: any) {
-            throw new Error('Error generating token: ' + error.message);
+            return error;
         }
     }
 }

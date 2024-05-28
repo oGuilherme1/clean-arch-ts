@@ -3,8 +3,7 @@ import { UseCase } from "../usecase";
 import { Project } from "../../../domain/entities/project";
 
 export type ShowProjectInput = {
-    userId: string;
-    projectId: string;
+    projectId: string
 }
 
 export type ShowProjectOutput = {
@@ -19,14 +18,21 @@ export class ShowProjectUseCase implements UseCase<ShowProjectInput, ShowProject
         return new ShowProjectUseCase(projectGateway);
     }
 
-    public async execute({ userId, projectId }: ShowProjectInput): Promise<ShowProjectOutput> {
-        
-        const project = await this.projectGateway.show(userId, projectId);
+    public async execute({ projectId }: ShowProjectInput): Promise<ShowProjectOutput> {
 
-        if (!project) {
-            throw new Error('Project not found');
+        try{
+
+            const project = await this.projectGateway.show(projectId);
+
+            if(!project ) {
+                throw new Error('Project not found');
+            }
+
+            return { project };
+
+        } catch(error: any){
+            return error;
         }
-
-        return { project };
+        
     }
 }

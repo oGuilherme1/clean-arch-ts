@@ -23,23 +23,28 @@ export class UpdateUserUseCase implements UseCase<UpdateUserInput, UpdateUserOut
 
     public async execute({ userId, name, password }: UpdateUserInput): Promise<UpdateUserOutput>{
 
-        const existingUser = await this.userGateway.findById(userId);
+        try {
+            const existingUser = await this.userGateway.findById(userId);
 
-        if (!existingUser) {
-            throw new Error('User not found');
+            if (!existingUser) {
+                throw new Error('User not found');
+            }
+        
+            const updatedUser = User.create({
+                name: name,
+                email: existingUser.email,
+                password: password
+            }, existingUser.id)
+        
+            await this.userGateway.update(updatedUser);
+    
+            const output = { updatedUser };
+    
+            return  output;
+            
+        } catch(error: any) {
+            return error;
         }
-    
-        const updatedUser = User.create({
-            name: name,
-            email: existingUser.email,
-            password: password
-        }, existingUser.id)
-    
-        await this.userGateway.update(updatedUser);
-
-        const output = { updatedUser };
-
-        return  output;
 
     }
 

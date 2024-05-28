@@ -29,38 +29,38 @@ export class CreateUserUseCase implements UseCase<CreateUserInput, CreateUserOut
 
     public async execute({name, email, password}: CreateUserInput): Promise<CreateUserOutput> {
         
-        const existingUser = await this.userGateway.findUserByEmail(email);
-        
-        if (existingUser) {
-            throw new Error('User already exists with this email.');
-        }
-
-        const aUser = User.create({
-            name, 
-            email, 
-            password
-        })
-
         try {
+            const existingUser = await this.userGateway.findUserByEmail(email);
+        
+            if (existingUser) {
+                throw new Error('User already exists with this email.');
+            }
+    
+            const aUser = User.create({
+                name, 
+                email, 
+                password
+            })
+            
             await this.userGateway.store(aUser);
+
+            const generateTokenInput: GenerateTokenInput = {
+                idUser: aUser.id,
+                email,
+                password
+            }
+    
+            const generateTokenUsecase = GenerateTokenUsecase.create(this.authenticate);
+    
+            const generateTokenOutput: GenerateTokenOutput = await generateTokenUsecase.execute(generateTokenInput);
+    
+            const output = this.presentOutput(aUser, generateTokenOutput.access_token, generateTokenOutput.refresh_token)
+    
+            return output;
         } 
         catch (error: any) {
-            throw new Error('Error storing user: ' + error.message);
+            return error;
         }
-
-        const generateTokenInput: GenerateTokenInput = {
-            idUser: aUser.id,
-            email,
-            password
-        }
-
-        const generateTokenUsecase = GenerateTokenUsecase.create(this.authenticate);
-
-        const generateTokenOutput: GenerateTokenOutput = await generateTokenUsecase.execute(generateTokenInput);
-
-        const output = this.presentOutput(aUser, generateTokenOutput.access_token, generateTokenOutput.refresh_token)
-
-        return output;
 
     }
 
